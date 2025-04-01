@@ -21,12 +21,6 @@ namespace GestiondTransaccionesBancarias.Models
         public DateTime Fecha { get; set; }
 
         // Relaciones
-        public int ClienteId { get; set; }
-        public Cliente Cliente { get; set; }
-
-        public int? EmpleadoId { get; set; } // Null porque no siempre habra un empleado invlucrado
-        public Empleado Empleado { get; set; }
-
         public int CuentaId { get; set; }
         public CuentaBancaria Cuenta { get; set; }
     }

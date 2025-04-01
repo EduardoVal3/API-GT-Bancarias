@@ -16,7 +16,5 @@ namespace GestiondTransaccionesBancarias.Models
     public class Empleado : Persona
     {
         public TipoEmpleado Tipo { get; set; }
-
-        public ICollection<Transaccion> Transacciones { get; set; } = new List<Transaccion>();
     }
 }
