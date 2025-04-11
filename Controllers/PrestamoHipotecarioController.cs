@@ -1,0 +1,154 @@
+﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
+using GestiondTransaccionesBancarias.Models;
+
+namespace GestiondTransaccionesBancarias.Controllers
+{
+    /// <summary>
+    /// Controlador para gestionar préstamos hipotecarios.
+    /// </summary>
+    [RoutePrefix("api/prestamohipotecario")]
+    public class PrestamoHipotecarioController : ApiController
+    {
+        private DBContextProject db = new DBContextProject();
+
+        /// <summary>
+        /// Obtiene la lista de préstamos hipotecarios.
+        /// </summary>
+        /// <returns>Lista de préstamos hipotecarios.</returns>
+        public IQueryable<PrestamoHipotecario> GetPrestamosHipotecarios()
+        {
+            return db.Prestamos.OfType<PrestamoHipotecario>()
+            .Include(t => t.Cliente);
+        }
+
+        /// <summary>
+        /// Obtiene un préstamo hipotecario por su ID.
+        /// </summary>
+        /// <param name="id">ID del préstamo hipotecario.</param>
+        /// <returns>Préstamo hipotecario encontrado.</returns>
+        /// <response code="200">Devuelve el préstamo encontrado.</response>
+        /// <response code="404">Si el préstamo no es encontrado.</response>
+        [ResponseType(typeof(PrestamoHipotecario))]
+        public async Task<IHttpActionResult> GetPrestamoHipotecario(int id)
+        {
+            PrestamoHipotecario prestamo = await db.Prestamos.OfType<PrestamoHipotecario>()
+                .Include(t => t.Cliente)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (prestamo == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(prestamo);
+        }
+
+        /// <summary>
+        /// Actualiza un préstamo hipotecario existente.
+        /// </summary>
+        /// <param name="id">ID del préstamo.</param>
+        /// <param name="prestamo">Datos del préstamo a actualizar.</param>
+        /// <returns>Resultado de la operación.</returns>
+        /// <response code="204">Operación exitosa sin contenido.</response>
+        /// <response code="400">Solicitud incorrecta.</response>
+        /// <response code="404">Si el préstamo no es encontrado.</response>
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutPrestamoHipotecario(int id, PrestamoHipotecario prestamo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != prestamo.Id)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(prestamo).State = EntityState.Modified;
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PrestamoHipotecarioExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// Crea un nuevo préstamo hipotecario.
+        /// </summary>
+        /// <param name="prestamo">Datos del préstamo a crear.</param>
+        /// <returns>Préstamo creado.</returns>
+        /// <response code="201">Préstamo creado con éxito.</response>
+        /// <response code="400">Solicitud incorrecta.</response>
+        [ResponseType(typeof(PrestamoHipotecario))]
+        public async Task<IHttpActionResult> PostPrestamoHipotecario(PrestamoHipotecario prestamo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Prestamos.Add(prestamo);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = prestamo.Id }, prestamo);
+        }
+
+        /// <summary>
+        /// Elimina un préstamo hipotecario por su ID.
+        /// </summary>
+        /// <param name="id">ID del préstamo.</param>
+        /// <returns>Préstamo eliminado.</returns>
+        /// <response code="200">Préstamo eliminado con éxito.</response>
+        /// <response code="404">Si el préstamo no es encontrado.</response>
+        [ResponseType(typeof(PrestamoHipotecario))]
+        public async Task<IHttpActionResult> DeletePrestamoHipotecario(int id)
+        {
+            PrestamoHipotecario prestamo = await db.Prestamos.OfType<PrestamoHipotecario>()
+                .Include(t => t.Cliente)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            if (prestamo == null)
+            {
+                return NotFound();
+            }
+
+            db.Prestamos.Remove(prestamo);
+            await db.SaveChangesAsync();
+
+            return Ok(prestamo);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private bool PrestamoHipotecarioExists(int id)
+        {
+            return db.Prestamos.OfType<PrestamoHipotecario>()
+                .Count(p => p.Id == id) > 0;
+        }
+    }
+}

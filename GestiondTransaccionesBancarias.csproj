@@ -60,6 +60,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -172,37 +173,51 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\CuentaBancariaController.cs" />
+    <Compile Include="Controllers\DepositoController.cs" />
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PrestamoController.cs" />
-    <Compile Include="Controllers\TarjetaController.cs" />
-    <Compile Include="Controllers\TransaccionController.cs" />
+    <Compile Include="Controllers\PrestamoHipotecarioController.cs" />
+    <Compile Include="Controllers\PrestamoPersonalController.cs" />
+    <Compile Include="Controllers\RetiroController.cs" />
+    <Compile Include="Controllers\TarjetaCreditoController.cs" />
+    <Compile Include="Controllers\TarjetaDebitoController.cs" />
+    <Compile Include="Controllers\TransferenciaController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202503230120177_ConfigurarRelaciones.cs" />
-    <Compile Include="Migrations\202503230120177_ConfigurarRelaciones.Designer.cs">
-      <DependentUpon>202503230120177_ConfigurarRelaciones.cs</DependentUpon>
+    <Compile Include="Migrations\202504030406589_AgregarTablasYRelaciones.cs" />
+    <Compile Include="Migrations\202504030406589_AgregarTablasYRelaciones.Designer.cs">
+      <DependentUpon>202504030406589_AgregarTablasYRelaciones.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202503230200564_InitialCreate.cs" />
-    <Compile Include="Migrations\202503230200564_InitialCreate.Designer.cs">
-      <DependentUpon>202503230200564_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202504040049084_AgregarCambiosFinales.cs" />
+    <Compile Include="Migrations\202504040049084_AgregarCambiosFinales.Designer.cs">
+      <DependentUpon>202504040049084_AgregarCambiosFinales.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202503310733450_FixForeignKeyConstraints.cs" />
-    <Compile Include="Migrations\202503310733450_FixForeignKeyConstraints.Designer.cs">
-      <DependentUpon>202503310733450_FixForeignKeyConstraints.cs</DependentUpon>
+    <Compile Include="Migrations\202504050113143_CreateTPHEnfoque.cs" />
+    <Compile Include="Migrations\202504050113143_CreateTPHEnfoque.Designer.cs">
+      <DependentUpon>202504050113143_CreateTPHEnfoque.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504110000004_EnumEmpleado.cs" />
+    <Compile Include="Migrations\202504110000004_EnumEmpleado.Designer.cs">
+      <DependentUpon>202504110000004_EnumEmpleado.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202504110048554_FixEnum.cs" />
+    <Compile Include="Migrations\202504110048554_FixEnum.Designer.cs">
+      <DependentUpon>202504110048554_FixEnum.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\CuentaBancaria.cs" />
     <Compile Include="Models\DBContextProject.cs" />
+    <Compile Include="Models\Deposito.cs" />
     <Compile Include="Models\Empleado.cs" />
     <Compile Include="Models\EntityBase.cs" />
     <Compile Include="Models\Persona.cs" />
     <Compile Include="Models\Prestamo.cs" />
     <Compile Include="Models\PrestamoHipotecario.cs" />
     <Compile Include="Models\PrestamoPersonal.cs" />
+    <Compile Include="Models\Retiro.cs" />
     <Compile Include="Models\Tarjeta.cs" />
     <Compile Include="Models\TarjetaCredito.cs" />
     <Compile Include="Models\TarjetaDebito.cs" />
@@ -351,14 +366,20 @@
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202503230120177_ConfigurarRelaciones.resx">
-      <DependentUpon>202503230120177_ConfigurarRelaciones.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504030406589_AgregarTablasYRelaciones.resx">
+      <DependentUpon>202504030406589_AgregarTablasYRelaciones.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202503230200564_InitialCreate.resx">
-      <DependentUpon>202503230200564_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504040049084_AgregarCambiosFinales.resx">
+      <DependentUpon>202504040049084_AgregarCambiosFinales.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202503310733450_FixForeignKeyConstraints.resx">
-      <DependentUpon>202503310733450_FixForeignKeyConstraints.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202504050113143_CreateTPHEnfoque.resx">
+      <DependentUpon>202504050113143_CreateTPHEnfoque.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504110000004_EnumEmpleado.resx">
+      <DependentUpon>202504110000004_EnumEmpleado.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504110048554_FixEnum.resx">
+      <DependentUpon>202504110048554_FixEnum.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

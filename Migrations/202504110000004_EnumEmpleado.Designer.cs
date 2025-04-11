@@ -7,13 +7,13 @@ namespace GestiondTransaccionesBancarias.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class FixForeignKeyConstraints : IMigrationMetadata
+    public sealed partial class EnumEmpleado : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(FixForeignKeyConstraints));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(EnumEmpleado));
         
         string IMigrationMetadata.Id
         {
-            get { return "202503310733450_FixForeignKeyConstraints"; }
+            get { return "202504110000004_EnumEmpleado"; }
         }
         
         string IMigrationMetadata.Source

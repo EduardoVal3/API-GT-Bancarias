@@ -1,104 +1,165 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using GestiondTransaccionesBancarias.Models;
 
 namespace GestiondTransaccionesBancarias.Controllers
 {
-    /// <summary>
-    /// Controlador para gestionar clientes.
-    /// </summary>
-    [RoutePrefix("api/cliente")]
     public class ClienteController : ApiController
     {
         private DBContextProject db = new DBContextProject();
 
         /// <summary>
-        /// Obtiene todos los clientes.
+        /// Obtiene la lista de clientes.
         /// </summary>
         /// <returns>Lista de clientes.</returns>
-        [HttpGet]
-        [Route("")]
-        public IEnumerable<Cliente> Get()
+        public IQueryable<Cliente> GetClientes()
         {
-            return db.Clientes.ToList();
+            return db.Personas.OfType<Cliente>();
         }
 
         /// <summary>
-        /// Obtiene un cliente por ID.
+        /// Obtiene un cliente por su ID.
         /// </summary>
         /// <param name="id">ID del cliente.</param>
         /// <returns>Cliente encontrado.</returns>
-        [HttpGet]
-        [Route("{id}")]
-        public IHttpActionResult Get(int id)
+        /// <response code="200">Devuelve el cliente encontrado.</response>
+        /// <response code="404">Si el cliente no es encontrado.</response>
+        [ResponseType(typeof(Cliente))]
+        public async Task<IHttpActionResult> GetCliente(int id)
         {
-            var cliente = db.Clientes.Find(id);
-            if (cliente == null) return NotFound();
+            Cliente cliente = await db.Personas.OfType<Cliente>().Include(c => c.CuentasBancarias).Include(c => c.Prestamos).Include(c => c.Tarjetas).FirstOrDefaultAsync(c => c.Id == id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
             return Ok(cliente);
-        }
-
-        /// <summary>
-        /// Crea un nuevo cliente.
-        /// </summary>
-        /// <param name="cliente">Datos del cliente.</param>
-        /// <returns>Cliente creado.</returns>
-        [HttpPost]
-        [Route("")]
-        public IHttpActionResult Post([FromBody] Cliente cliente)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            db.Clientes.Add(cliente);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = cliente.Id }, cliente);
         }
 
         /// <summary>
         /// Actualiza un cliente existente.
         /// </summary>
         /// <param name="id">ID del cliente.</param>
-        /// <param name="cliente">Datos actualizados del cliente.</param>
+        /// <param name="cliente">Datos del cliente a actualizar.</param>
         /// <returns>Resultado de la operación.</returns>
-        [HttpPut]
-        [Route("{id}")]
-        public IHttpActionResult Put(int id, [FromBody] Cliente cliente)
+        /// <response code="204">Operación exitosa sin contenido.</response>
+        /// <response code="400">Solicitud incorrecta.</response>
+        /// <response code="404">Si el cliente no es encontrado.</response>
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutCliente(int id, Cliente cliente)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            var clienteExistente = db.Clientes.Find(id);
-            if (clienteExistente == null) return NotFound();
+            if (id != cliente.Id)
+            {
+                return BadRequest();
+            }
 
-            clienteExistente.Nombre = cliente.Nombre;
-            clienteExistente.Apellido = cliente.Apellido;
-            clienteExistente.Email = cliente.Email;
-            clienteExistente.Telefono = cliente.Telefono;
-            clienteExistente.Direccion = cliente.Direccion;
+            db.Entry(cliente).State = EntityState.Modified;
 
-            db.Entry(clienteExistente).State = EntityState.Modified;
-            db.SaveChanges();
-            return Ok();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClienteExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         /// <summary>
-        /// Elimina un cliente.
+        /// Crea un nuevo cliente.
+        /// </summary>
+        /// <param name="cliente">Datos del cliente a crear.</param>
+        /// <returns>Cliente creado.</returns>
+        /// <response code="201">Cliente creado con éxito.</response>
+        /// <response code="400">Solicitud incorrecta.</response>
+        [ResponseType(typeof(Cliente))]
+        public async Task<IHttpActionResult> PostCliente(Cliente cliente)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Asegurarse de que las colecciones estén inicializadas si no se proporcionan
+            if (cliente.CuentasBancarias == null)
+            {
+                cliente.CuentasBancarias = new List<CuentaBancaria>();
+            }
+            if (cliente.Prestamos == null)
+            {
+                cliente.Prestamos = new List<Prestamo>();
+            }
+            if (cliente.Tarjetas == null)
+            {
+                cliente.Tarjetas = new List<Tarjeta>();
+            }
+
+            db.Personas.Add(cliente);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = cliente.Id }, cliente);
+        }
+
+        /// <summary>
+        /// Elimina un cliente por su ID.
         /// </summary>
         /// <param name="id">ID del cliente.</param>
-        /// <returns>Resultado de la operación.</returns>
-        [HttpDelete]
-        [Route("{id}")]
-        public IHttpActionResult Delete(int id)
+        /// <returns>Cliente eliminado.</returns>
+        /// <response code="200">Cliente eliminado con éxito.</response>
+        /// <response code="404">Si el cliente no es encontrado.</response>
+        [ResponseType(typeof(Cliente))]
+        public async Task<IHttpActionResult> DeleteCliente(int id)
         {
-            var cliente = db.Clientes.Find(id);
-            if (cliente == null) return NotFound();
+            Cliente cliente = await db.Personas.OfType<Cliente>().Include(c => c.CuentasBancarias).Include(c => c.Prestamos).Include(c => c.Tarjetas).FirstOrDefaultAsync(c => c.Id == id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
 
-            db.Clientes.Remove(cliente);
-            db.SaveChanges();
-            return Ok();
+            // Eliminar las relaciones antes de eliminar el cliente
+            db.CuentasBancarias.RemoveRange(cliente.CuentasBancarias);
+            db.Prestamos.RemoveRange(cliente.Prestamos);
+            db.Tarjetas.RemoveRange(cliente.Tarjetas);
+
+            db.Personas.Remove(cliente);
+            await db.SaveChangesAsync();
+
+            return Ok(cliente);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private bool ClienteExists(int id)
+        {
+            return db.Personas.OfType<Cliente>().Count(e => e.Id == id) > 0;
         }
     }
 }

@@ -7,13 +7,13 @@ namespace GestiondTransaccionesBancarias.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class InitialCreate : IMigrationMetadata
+    public sealed partial class AgregarTablasYRelaciones : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AgregarTablasYRelaciones));
         
         string IMigrationMetadata.Id
         {
-            get { return "202503230200564_InitialCreate"; }
+            get { return "202504030406589_AgregarTablasYRelaciones"; }
         }
         
         string IMigrationMetadata.Source

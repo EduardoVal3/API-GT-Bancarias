@@ -1,24 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestiondTransaccionesBancarias.Models
 {
-    public enum TipoTransaccion
+    public abstract class Transaccion : EntityBase
     {
-        Deposito,
-        Retiro,
-        Transferencia
-    }
-
-    public class Transaccion : EntityBase
-    {
+        public string HechoPor { get; set; }
         public decimal Monto { get; set; }
-        public TipoTransaccion Tipo { get; set; }
         public string Descripcion { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
         // Relaciones
         public int CuentaId { get; set; }

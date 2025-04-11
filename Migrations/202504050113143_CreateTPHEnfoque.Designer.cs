@@ -7,13 +7,13 @@ namespace GestiondTransaccionesBancarias.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class ConfigurarRelaciones : IMigrationMetadata
+    public sealed partial class CreateTPHEnfoque : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ConfigurarRelaciones));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateTPHEnfoque));
         
         string IMigrationMetadata.Id
         {
-            get { return "202503230120177_ConfigurarRelaciones"; }
+            get { return "202504050113143_CreateTPHEnfoque"; }
         }
         
         string IMigrationMetadata.Source

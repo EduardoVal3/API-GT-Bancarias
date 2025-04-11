@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestiondTransaccionesBancarias.Models
 {
-    public enum TipoTarjeta
-    {
-        Credito,
-        Debito
-    }
-    public class Tarjeta : EntityBase
+    public abstract class Tarjeta : EntityBase
     {
         public string NumeroTarjeta { get; set; }
         public DateTime FechaExpiracion { get; set; }

@@ -1,25 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestiondTransaccionesBancarias.Models
 {
-    public enum TipoPrestamo
-    {
-        Hipotecario,
-        Personal
-    }
     public enum EstadoActual
     {
         Activo,
         Pagado,
         Vencido
     }
+
     public class Prestamo : EntityBase
     {
-        public TipoPrestamo Tipo { get; set; }
         public decimal MontoPrestamo { get; set; }
         public decimal TasaInteres { get; set; }
         public int CuotasPendientes { get; set; }
