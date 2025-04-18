@@ -69,6 +69,15 @@ namespace GestiondTransaccionesBancarias.Controllers
                 return BadRequest();
             }
 
+            bool emailEnUso = await db.Personas
+                .AnyAsync(p => p.Id != empleado.Id && p.Email.ToLower() == empleado.Email.ToLower());
+
+            if (emailEnUso)
+            {
+                ModelState.AddModelError("Email", "El email ya está en uso por otra persona.");
+                return BadRequest(ModelState);
+            }
+
             db.Entry(empleado).State = EntityState.Modified;
 
             try
@@ -102,6 +111,15 @@ namespace GestiondTransaccionesBancarias.Controllers
         {
             if (!ModelState.IsValid)
             {
+                return BadRequest(ModelState);
+            }
+
+            bool emailEnUso = await db.Personas
+                .AnyAsync(p => p.Email.ToLower() == empleado.Email.ToLower());
+
+            if (emailEnUso)
+            {
+                ModelState.AddModelError("Email", "El email ya está en uso por otra persona.");
                 return BadRequest(ModelState);
             }
 

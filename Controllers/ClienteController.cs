@@ -34,7 +34,12 @@ namespace GestiondTransaccionesBancarias.Controllers
         [ResponseType(typeof(Cliente))]
         public async Task<IHttpActionResult> GetCliente(int id)
         {
-            Cliente cliente = await db.Personas.OfType<Cliente>().Include(c => c.CuentasBancarias).Include(c => c.Prestamos).Include(c => c.Tarjetas).FirstOrDefaultAsync(c => c.Id == id);
+            Cliente cliente = await db.Personas.OfType<Cliente>()
+                .Include(c => c.CuentasBancarias)
+                .Include(c => c.Prestamos)
+                .Include(c => c.Tarjetas)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
@@ -63,6 +68,14 @@ namespace GestiondTransaccionesBancarias.Controllers
             if (id != cliente.Id)
             {
                 return BadRequest();
+            }
+            bool emailEnUso = await db.Personas
+                .AnyAsync(p => p.Id != cliente.Id && p.Email.ToLower() == cliente.Email.ToLower());
+
+            if (emailEnUso)
+            {
+                ModelState.AddModelError("Email", "El email ya está en uso por otra persona.");
+                return BadRequest(ModelState);
             }
 
             db.Entry(cliente).State = EntityState.Modified;
@@ -101,6 +114,15 @@ namespace GestiondTransaccionesBancarias.Controllers
                 return BadRequest(ModelState);
             }
 
+            bool emailEnUso = await db.Personas
+                .AnyAsync(p => p.Email.ToLower() == cliente.Email.ToLower());
+
+            if (emailEnUso)
+            {
+                ModelState.AddModelError("Email", "El email ya está en uso por otra persona.");
+                return BadRequest(ModelState);
+            }
+
             // Asegurarse de que las colecciones estén inicializadas si no se proporcionan
             if (cliente.CuentasBancarias == null)
             {
@@ -131,13 +153,17 @@ namespace GestiondTransaccionesBancarias.Controllers
         [ResponseType(typeof(Cliente))]
         public async Task<IHttpActionResult> DeleteCliente(int id)
         {
-            Cliente cliente = await db.Personas.OfType<Cliente>().Include(c => c.CuentasBancarias).Include(c => c.Prestamos).Include(c => c.Tarjetas).FirstOrDefaultAsync(c => c.Id == id);
+            Cliente cliente = await db.Personas.OfType<Cliente>()
+                .Include(c => c.CuentasBancarias)
+                .Include(c => c.Prestamos)
+                .Include(c => c.Tarjetas)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (cliente == null)
             {
                 return NotFound();
             }
 
-            // Eliminar las relaciones antes de eliminar el cliente
             db.CuentasBancarias.RemoveRange(cliente.CuentasBancarias);
             db.Prestamos.RemoveRange(cliente.Prestamos);
             db.Tarjetas.RemoveRange(cliente.Tarjetas);

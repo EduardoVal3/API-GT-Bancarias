@@ -206,6 +206,10 @@
     <Compile Include="Migrations\202504110048554_FixEnum.Designer.cs">
       <DependentUpon>202504110048554_FixEnum.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202504150243181_EstadosPrestamos.cs" />
+    <Compile Include="Migrations\202504150243181_EstadosPrestamos.Designer.cs">
+      <DependentUpon>202504150243181_EstadosPrestamos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\CuentaBancaria.cs" />
@@ -380,6 +384,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202504110048554_FixEnum.resx">
       <DependentUpon>202504110048554_FixEnum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202504150243181_EstadosPrestamos.resx">
+      <DependentUpon>202504150243181_EstadosPrestamos.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

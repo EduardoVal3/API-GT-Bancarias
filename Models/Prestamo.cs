@@ -16,6 +16,13 @@ namespace GestiondTransaccionesBancarias.Models
         public decimal TasaInteres { get; set; }
         public int CuotasPendientes { get; set; }
         public DateTime FechaPago { get; set; }
+        // Propiedad de sombra para manejar el nombre del enum
+        [NotMapped]
+        public string TipoString
+        {
+            get => Estado.ToString();
+            set => Estado = (EstadoActual)Enum.Parse(typeof(EstadoActual), value, true);
+        }
         public EstadoActual Estado { get; set; } // "Activo", "Pagado", "Vencido"
 
         // Relaciones

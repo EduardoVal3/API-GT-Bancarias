@@ -92,6 +92,10 @@ namespace GestiondTransaccionesBancarias.Models
             modelBuilder.Entity<Empleado>()
                 .Property(e => e.Tipo)
                 .HasColumnName("Tipo");
+
+            modelBuilder.Entity<Prestamo>()
+                .Property(p => p.Estado)
+                .HasColumnName("Estado");
         }
 
         private void ConfigureRelationships(DbModelBuilder modelBuilder)
