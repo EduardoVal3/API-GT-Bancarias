@@ -1,9 +1,12 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
-using Microsoft.Owin.Security.ActiveDirectory;
+using Microsoft.Owin.Security.Jwt;
 using Owin;
-using System.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 [assembly: OwinStartup(typeof(GestiondTransaccionesBancarias.Startup))]
 namespace GestiondTransaccionesBancarias
@@ -12,24 +15,39 @@ namespace GestiondTransaccionesBancarias
     {
         public void Configuration(IAppBuilder app)
         {
-            // 1) Habilita CORS para que Swagger y tu front puedan llamar sin bloqueos
             app.UseCors(CorsOptions.AllowAll);
 
-            // 2) Configura Azure AD Bearer Auth
-            var tenantId = "{33a93990-8bb4-4b9d-b422-4f8851217d7e}";
-            var clientId = "{a3978411-dafe-43d0-b198-0848cac7b4c8}";
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
+            var tenantId = "33a93990-8bb4-4b9d-b422-4f8851217d7e";
+            var clientId = "a3978411-dafe-43d0-b198-0848cac7b4c8";
+            var issuer = $"https://login.microsoftonline.com/{tenantId}/v2.0";
+            var metadataUrl = $"{issuer}/.well-known/openid-configuration";
 
-            app.UseWindowsAzureActiveDirectoryBearerAuthentication(
-                new WindowsAzureActiveDirectoryBearerAuthenticationOptions
-                {
-                    Tenant = tenantId,
-                    TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidAudience = clientId
-                    },
-                    MetadataAddress = $"{authority}/v2.0/.well-known/openid-configuration"
-                });
+            // Obtener dinámicamente las claves de firma (issuer signing keys)
+            var configurationManager = new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>(
+                metadataUrl,
+                new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever()
+            );
+
+            var openIdConfig = Task.Run(() => configurationManager.GetConfigurationAsync()).Result;
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = issuer,
+                ValidAudience = $"api://{clientId}",
+                IssuerSigningKeys = openIdConfig.SigningKeys,
+
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(5)
+            };
+
+            app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
+            {
+                AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
+                TokenValidationParameters = tokenValidationParameters
+            });
         }
     }
 }

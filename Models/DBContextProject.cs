@@ -7,7 +7,6 @@ namespace GestiondTransaccionesBancarias.Models
     {
         public DBContextProject() : base("MyDbConnectionString") { }
 
-        // DbSets para entidades base (incluyen subclases)
         public DbSet<Persona> Personas { get; set; }
         public DbSet<CuentaBancaria> CuentasBancarias { get; set; }
         public DbSet<Prestamo> Prestamos { get; set; }

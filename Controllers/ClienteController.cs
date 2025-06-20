@@ -123,7 +123,7 @@ namespace GestiondTransaccionesBancarias.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Asegurarse de que las colecciones estén inicializadas si no se proporcionan
+            // Asegurarse de que las colecciones esten inicializadas si no se proporcionan
             if (cliente.CuentasBancarias == null)
             {
                 cliente.CuentasBancarias = new List<CuentaBancaria>();

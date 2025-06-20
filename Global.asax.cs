@@ -1,4 +1,5 @@
 using GestiondTransaccionesBancarias.Migrations;
+using GestiondTransaccionesBancarias.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -21,14 +22,8 @@ namespace GestiondTransaccionesBancarias
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            Database.SetInitializer(
-                new MigrateDatabaseToLatestVersion<
-                    GestiondTransaccionesBancarias.Models.DBContextProject,
-                    Configuration>());
+            // Database.SetInitializer<DBContextProject>(null);
 
-            // Forzar inicialización de BD
-            var ctx = new Models.DBContextProject();
-            ctx.Database.Initialize(force: true);
         }
     }
 }
